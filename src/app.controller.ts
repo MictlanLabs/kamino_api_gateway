@@ -6,7 +6,16 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getInfo() {
+    return {
+      name: 'Kamino API Gateway',
+      version: '1.0.0',
+      description: 'Gateway API para microservicios con arquitectura hexagonal',
+      endpoints: {
+        health: '/health',
+        ready: '/health/ready',
+        api: '/api/*',
+      },
+    };
   }
 }

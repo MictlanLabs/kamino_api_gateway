@@ -1,0 +1,43 @@
+### Información del Gateway
+GET http://localhost:3000/
+
+### Estado de salud
+GET http://localhost:3000/health
+
+### Estado de preparación
+GET http://localhost:3000/health/ready
+
+### Ejemplo de petición a servicio de usuarios (requiere JWT válido)
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+### Ejemplo de petición a servicio de lugares (requiere JWT válido)
+GET http://localhost:3000/api/places/nearby
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+### Ejemplo de petición a servicio de rutas (requiere JWT válido)
+GET http://localhost:3000/api/routes/123
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+### Ejemplo de petición a servicio narrador (requiere JWT válido)
+POST http://localhost:3000/api/narrator/generate
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+{
+  "text": "Describe this beautiful place",
+  "voice": "natural"
+}
+
+### Ejemplo de petición sin JWT (debería fallar con 401)
+GET http://localhost:3000/api/places/nearby
+
+### Ejemplo de petición con JWT inválido (debería fallar con 401)
+GET http://localhost:3000/api/places/nearby
+Authorization: Bearer invalid-token

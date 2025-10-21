@@ -17,28 +17,35 @@ export class GatewayService {
     const startTime = Date.now();
     
     try {
-      // Validar JWT
-      const authHeader = request.headers.authorization;
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        throw new Error('Missing or invalid authorization header');
-      }
-
-      const token = authHeader.substring(7);
-      const isValidToken = await this.authPort.validateToken(token);
+      // NEW: permitir desactivar autenticación por configuración
+      const authDisabled =
+        process.env.AUTH_DISABLED === 'true' || process.env.AUTH_REQUIRED === 'false';
       
-      if (!isValidToken) {
-        throw new Error('Invalid JWT token');
-      }
+      let enhancedHeaders = { ...request.headers };
 
-      // Obtener información del usuario del token
-      const user = await this.authPort.extractUserFromToken(token);
-      
-      // Agregar información del usuario a los headers
-      const enhancedHeaders = {
-        ...request.headers,
-        'x-user-id': user.id,
-        'x-user-email': user.email,
-      };
+      if (!authDisabled) {
+        const authHeader = request.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          throw new Error('Missing or invalid authorization header');
+        }
+
+        const token = authHeader.substring(7);
+        const isValidToken = await this.authPort.validateToken(token);
+        
+        if (!isValidToken) {
+          throw new Error('Invalid JWT token');
+        }
+
+        const user = await this.authPort.extractUserFromToken(token);
+        
+        enhancedHeaders = {
+          ...enhancedHeaders,
+          'x-user-id': user.id,
+          'x-user-email': user.email,
+        };
+      } else {
+        this.loggerPort.warn('JWT validation disabled by configuration', 'GatewayService');
+      }
 
       // Enrutar la petición
       const serviceRoute = request.getServiceRoute();

@@ -26,8 +26,8 @@ PORT=3000
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 
 # Microservices URLs
-USERS_SERVICE_URL=http://localhost:3001
-PLACES_SERVICE_URL=http://localhost:3002
+USERS_SERVICE_URL=http://localhost:8080
+PLACES_SERVICE_URL=http://localhost:3001
 ROUTES_SERVICE_URL=http://localhost:3003
 NARRATOR_SERVICE_URL=http://localhost:3004
 

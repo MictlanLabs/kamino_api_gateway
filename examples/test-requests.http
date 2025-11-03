@@ -1,0 +1,126 @@
+### ========================================
+### INFORMACIÓN DEL GATEWAY
+### ========================================
+
+### Información del Gateway
+GET http://localhost:3000/
+
+### Estado de salud
+GET http://localhost:3000/health
+
+### Estado de preparación
+GET http://localhost:3000/health/ready
+
+### ========================================
+### PRUEBAS DEL MICROSERVICIO DE USUARIOS
+### ========================================
+
+### 1. Registrar Usuario Normal
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "juan@example.com",
+  "password": "password123",
+  "firstName": "Juan",
+  "lastName": "Pérez"
+}
+
+### 2. Registrar Usuario ADMIN
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "admin123456",
+  "firstName": "Admin",
+  "lastName": "Principal",
+  "role": "ADMIN"
+}
+
+### 3. Iniciar Sesión (Usuario Normal)
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "juan@example.com",
+  "password": "password123"
+}
+
+### 4. Iniciar Sesión (Usuario ADMIN)
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "admin123456"
+}
+
+### 5. Ver Perfil (Usuario Normal) - REEMPLAZAR TOKEN
+GET http://localhost:3000/api/users/profile
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_DE_USUARIO_NORMAL
+
+### 6. Ver Perfil (Usuario ADMIN) - REEMPLAZAR TOKEN
+GET http://localhost:3000/api/users/profile
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_DE_ADMIN
+
+### 7. Ruta Solo para Admins (con token de ADMIN) - REEMPLAZAR TOKEN
+GET http://localhost:3000/api/users/admin-only
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_DE_ADMIN
+
+### 8. Ruta Solo para Admins (con token de usuario normal) - REEMPLAZAR TOKEN
+GET http://localhost:3000/api/users/admin-only
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_DE_USUARIO_NORMAL
+
+### 9. Cerrar Sesión (Usuario Normal) - REEMPLAZAR TOKEN
+POST http://localhost:3000/api/auth/logout
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_DE_USUARIO_NORMAL
+
+### 10. Cerrar Sesión (Usuario ADMIN) - REEMPLAZAR TOKEN
+POST http://localhost:3000/api/auth/logout
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_DE_ADMIN
+
+### ========================================
+### PRUEBAS DE VALIDACIÓN DE ERRORES
+### ========================================
+
+### Intento de login con credenciales incorrectas
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "juan@example.com",
+  "password": "password_incorrecto"
+}
+
+### Acceso a perfil sin token
+GET http://localhost:3000/api/users/profile
+
+### Acceso a perfil con token inválido
+GET http://localhost:3000/api/users/profile
+Authorization: Bearer token_invalido
+
+### Acceso a ruta de admin sin token
+GET http://localhost:3000/api/users/admin-only
+
+### ========================================
+### OTROS MICROSERVICIOS (EJEMPLOS)
+### ========================================
+
+### Ejemplo de petición a servicio de lugares (requiere JWT válido)
+GET http://localhost:3000/api/places/nearby
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_VALIDO
+
+### Ejemplo de petición a servicio de rutas (requiere JWT válido)
+GET http://localhost:3000/api/routes/123
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_VALIDO
+
+### Ejemplo de petición a servicio narrador (requiere JWT válido)
+POST http://localhost:3000/api/narrator/generate
+Content-Type: application/json
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_VALIDO
+
+{
+  "text": "Describe this beautiful place",
+  "voice": "natural"
+}

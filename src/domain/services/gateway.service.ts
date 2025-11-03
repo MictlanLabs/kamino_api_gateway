@@ -42,6 +42,7 @@ export class GatewayService {
           ...enhancedHeaders,
           'x-user-id': user.id,
           'x-user-email': user.email,
+          'x-user-role': user.role || 'USER',
         };
       } else {
         this.loggerPort.warn('JWT validation disabled by configuration', 'GatewayService');
@@ -53,7 +54,7 @@ export class GatewayService {
       const finalUrl = request.getTargetUrl(targetUrl);
 
       this.loggerPort.log(
-        `Routing request to ${serviceRoute} service: ${request.method} ${finalUrl}`,
+        `Routing request: ${request.method} ${request.url} -> ${serviceRoute} service -> ${finalUrl}`,
         'GatewayService',
       );
 

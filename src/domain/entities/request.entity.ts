@@ -11,6 +11,7 @@ export class RequestEntity {
 
   getServiceRoute(): string {
     if (this.url.startsWith('/api/auth')) return 'users';
+    if (this.url.startsWith('/api/users')) return 'users';
     if (this.url.startsWith('/api/places')) return 'places';
     if (this.url.startsWith('/api/routes')) return 'routes';
     if (this.url.startsWith('/api/narrator')) return 'narrator';
@@ -18,6 +19,12 @@ export class RequestEntity {
   }
 
   getTargetUrl(baseUrl: string): string {
+    // Para el microservicio de usuarios, mantener la ruta completa
+    if (this.url.startsWith('/api/auth') || this.url.startsWith('/api/users')) {
+      return `${baseUrl}${this.url}`;
+    }
+    
+    // Para otros servicios, remover el prefijo /api/[service]
     const servicePath = this.url.replace(/^\/api\/[^\/]+/, '');
     return `${baseUrl}${servicePath}`;
   }

@@ -51,7 +51,8 @@ export class GatewayService {
       // Enrutar la petición
       const serviceRoute = request.getServiceRoute();
       const targetUrl = this.getServiceUrl(serviceRoute);
-      const finalUrl = request.getTargetUrl(targetUrl);
+      const serviceBasePath = this.getServiceBasePath(serviceRoute);
+      const finalUrl = request.getTargetUrl(targetUrl, serviceBasePath);
 
       this.loggerPort.log(
         `Routing request: ${request.method} ${request.url} -> ${serviceRoute} service -> ${finalUrl}`,
@@ -110,5 +111,16 @@ export class GatewayService {
     };
 
     return serviceUrls[serviceRoute];
+  }
+
+  private getServiceBasePath(serviceRoute: string): string {
+    const serviceBasePaths = {
+      users: '',
+      places: '/api/v1/places',
+      routes: '/api/v1/routes',
+      narrator: '/api/v1/narrator',
+    };
+
+    return serviceBasePaths[serviceRoute] || '';
   }
 }

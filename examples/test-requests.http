@@ -104,12 +104,52 @@ Authorization: Bearer token_invalido
 GET http://localhost:3000/api/users/admin-only
 
 ### ========================================
-### OTROS MICROSERVICIOS (EJEMPLOS)
+### PRUEBAS DEL MICROSERVICIO DE PLACES
 ### ========================================
 
-### Ejemplo de petición a servicio de lugares (requiere JWT válido)
+### 1. Obtener lugares cercanos (sin autenticación)
 GET http://localhost:3000/api/places/nearby
-Authorization: Bearer REEMPLAZAR_CON_TOKEN_VALIDO
+
+### 2. Obtener lugares cercanos con coordenadas (sin autenticación)
+GET http://localhost:3000/api/places/nearby?lat=-12.0464&lng=-77.0428&radius=1000
+
+### 3. Obtener todos los lugares (sin autenticación)
+GET http://localhost:3000/api/places
+
+### 4. Obtener un lugar específico (sin autenticación)
+GET http://localhost:3000/api/places/1
+
+### 5. Crear un lugar (requiere autenticación)
+POST http://localhost:3000/api/places
+Content-Type: application/json
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_DE_ADMIN
+
+{
+  "name": "Parque Central",
+  "description": "Hermoso parque en el centro de la ciudad",
+  "latitude": -12.0464,
+  "longitude": -77.0428,
+  "category": "parque",
+  "address": "Centro de Lima"
+}
+
+### 6. Actualizar un lugar (requiere autenticación)
+PUT http://localhost:3000/api/places/1
+Content-Type: application/json
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_DE_ADMIN
+
+{
+  "name": "Parque Central Actualizado",
+  "description": "Parque renovado con nuevas instalaciones"
+}
+
+### 7. Eliminar un lugar (requiere autenticación)
+DELETE http://localhost:3000/api/places/1
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_DE_ADMIN
+
+### ========================================
+### OTROS MICROSERVICIOS (EJEMPLOS)
+### ========================================
 
 ### Ejemplo de petición a servicio de rutas (requiere JWT válido)
 GET http://localhost:3000/api/routes/123

@@ -18,14 +18,20 @@ export class RequestEntity {
     throw new Error(`Unknown service route for URL: ${this.url}`);
   }
 
-  getTargetUrl(baseUrl: string): string {
-    // Para el microservicio de usuarios, mantener la ruta completa
-    if (this.url.startsWith('/api/auth') || this.url.startsWith('/api/users')) {
+  getTargetUrl(baseUrl: string, serviceBasePath: string = ''): string {
+    // Remover el prefijo /api/[service] para obtener el path real
+    const servicePath = this.url.replace(/^\/api\/[^\/]+/, '');
+    
+    // Para el servicio de usuarios, mantener la ruta completa si es /api/auth
+    if (this.url.startsWith('/api/auth')) {
       return `${baseUrl}${this.url}`;
     }
     
-    // Para otros servicios, remover el prefijo /api/[service]
-    const servicePath = this.url.replace(/^\/api\/[^\/]+/, '');
-    return `${baseUrl}${servicePath}`;
+    // Construir la URL final combinando baseUrl + serviceBasePath + servicePath
+    // Eliminar barras duplicadas
+    let finalPath = serviceBasePath + servicePath;
+    finalPath = finalPath.replace(/\/+/g, '/'); // Reemplazar múltiples barras con una sola
+    
+    return `${baseUrl}${finalPath}`;
   }
 }

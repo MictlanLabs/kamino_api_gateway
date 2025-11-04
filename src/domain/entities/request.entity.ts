@@ -10,22 +10,47 @@ export class RequestEntity {
   ) {}
 
   getServiceRoute(): string {
-    if (this.url.startsWith('/api/auth')) return 'users';
-    if (this.url.startsWith('/api/users')) return 'users';
-    if (this.url.startsWith('/api/places')) return 'places';
-    if (this.url.startsWith('/api/routes')) return 'routes';
-    if (this.url.startsWith('/api/narrator')) return 'narrator';
+    const match = this.url.match(/^\/api(?:\/(v\d+))?\/([^\/\?\#]+)/);
+    if (!match) {
+      throw new Error(`Unknown service route for URL: ${this.url}`);
+    }
+
+    const serviceSegment = match[2];
+
+    if (serviceSegment === 'auth' || serviceSegment === 'users') return 'users';
+    if (serviceSegment === 'places') return 'places';
+    if (serviceSegment === 'routes') return 'routes';
+    if (serviceSegment === 'narrator') return 'narrator';
+
     throw new Error(`Unknown service route for URL: ${this.url}`);
   }
 
   getTargetUrl(baseUrl: string): string {
-    // Para el microservicio de usuarios, mantener la ruta completa
-    if (this.url.startsWith('/api/auth') || this.url.startsWith('/api/users')) {
-      return `${baseUrl}${this.url}`;
+    const normalizedBaseUrl = baseUrl.replace(/\/+$/, '');
+
+    const match = this.url.match(/^\/api(?:\/(v\d+))?\/([^\/\?\#]+)(.*)$/);
+    if (!match) {
+      throw new Error(`Unknown service route for URL: ${this.url}`);
     }
-    
-    // Para otros servicios, remover el prefijo /api/[service]
-    const servicePath = this.url.replace(/^\/api\/[^\/]+/, '');
-    return `${baseUrl}${servicePath}`;
+
+    const incomingVersion = match[1] || null;
+    const serviceSegment = match[2];
+    const remainder = match[3] || '';
+
+    const serviceKey = this.getServiceRoute(); // users | places | routes | narrator
+
+    const envKey = `${serviceKey.toUpperCase()}_SERVICE_BASE_PATH`;
+    const defaultBase = serviceKey === 'users' ? '/api' : '';
+    let basePath = (process.env[envKey] as string | undefined) ?? defaultBase;
+
+    // Si el cliente envió versión explícita (/api/v1), respetarla
+    if (incomingVersion) {
+      basePath = `/api/${incomingVersion}`;
+    }
+
+    const normalizedBasePath =
+      basePath ? `/${basePath.replace(/^\/+/, '').replace(/\/+$/, '')}` : '';
+
+    return `${normalizedBaseUrl}${normalizedBasePath}/${serviceSegment}${remainder}`;
   }
 }

@@ -41,8 +41,14 @@ export class GatewayController {
 
       res.status(response.status || 200).json(response.data);
     } catch (error) {
-      if (error.message.includes('Invalid JWT')) {
-        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      if (error.message.includes('AuthMissingToken')) {
+        throw new HttpException('Unauthorized: missing token', HttpStatus.UNAUTHORIZED);
+      }
+      if (error.message.includes('AuthInvalidToken')) {
+        throw new HttpException('Unauthorized: invalid token', HttpStatus.UNAUTHORIZED);
+      }
+      if (error.message.includes('AuthInsufficientPermissions')) {
+        throw new HttpException('Forbidden: insufficient permissions', HttpStatus.FORBIDDEN);
       }
       if (error.message.includes('Service unavailable')) {
         throw new HttpException('Service Unavailable', HttpStatus.SERVICE_UNAVAILABLE);
@@ -53,11 +59,7 @@ export class GatewayController {
       if (error.message.includes('Unknown service route')) {
         throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
       }
-      
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

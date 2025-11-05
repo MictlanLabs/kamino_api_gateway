@@ -15,41 +15,57 @@ export class GatewayService {
 
   async processRequest(request: RequestEntity): Promise<any> {
     const startTime = Date.now();
-    
     try {
-      // NEW: permitir desactivar autenticación por configuración
       const authDisabled =
         process.env.AUTH_DISABLED === 'true' || process.env.AUTH_REQUIRED === 'false';
-      
+
+      const serviceRoute = request.getServiceRoute();
       let enhancedHeaders = { ...request.headers };
 
-      if (!authDisabled) {
+      const requireAuthForPlaces = !authDisabled && serviceRoute === 'places';
+      if (requireAuthForPlaces) {
         const authHeader = request.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
-          throw new Error('Missing or invalid authorization header');
+          this.loggerPort.warn('AuthMissingToken: falta Authorization Bearer para places', 'GatewayService');
+          throw new Error('AuthMissingToken');
         }
 
         const token = authHeader.substring(7);
         const isValidToken = await this.authPort.validateToken(token);
-        
         if (!isValidToken) {
-          throw new Error('Invalid JWT token');
+          this.loggerPort.warn('AuthInvalidToken: JWT inválido o expirado para places', 'GatewayService');
+          throw new Error('AuthInvalidToken');
         }
 
         const user = await this.authPort.extractUserFromToken(token);
-        
+
+        const allowed = (process.env.PLACES_ALLOWED_ROLES || '')
+          .split(',')
+          .map((r) => r.trim())
+          .filter(Boolean);
+
+        if (allowed.length > 0) {
+          const roles = user.roles || [];
+          const hasRole = roles.some((r: string) => allowed.includes(r));
+          if (!hasRole) {
+            this.loggerPort.warn(
+              `AuthInsufficientPermissions: roles=${roles} no incluyen ${allowed}`,
+              'GatewayService',
+            );
+            throw new Error('AuthInsufficientPermissions');
+          }
+        }
+
         enhancedHeaders = {
           ...enhancedHeaders,
           'x-user-id': user.id,
           'x-user-email': user.email,
-          'x-user-role': user.role || 'USER',
+          'x-user-role': (user.roles && user.roles[0]) || 'USER',
         };
-      } else {
+      } else if (authDisabled) {
         this.loggerPort.warn('JWT validation disabled by configuration', 'GatewayService');
       }
 
-      // Enrutar la petición
-      const serviceRoute = request.getServiceRoute();
       const targetUrl = this.getServiceUrl(serviceRoute);
       const finalUrl = request.getTargetUrl(targetUrl);
 
@@ -58,7 +74,6 @@ export class GatewayService {
         'GatewayService',
       );
 
-      // Reenviar la petición
       const response = await this.gatewayPort.forwardRequest(
         request.method,
         finalUrl,
@@ -67,12 +82,10 @@ export class GatewayService {
       );
 
       const responseTime = Date.now() - startTime;
-      
-      // Log de la petición exitosa
       this.loggerPort.logRequest(
         request.method,
         request.url,
-        200,
+        response.status || 200,
         responseTime,
         request.userAgent,
         request.ip,
@@ -81,17 +94,24 @@ export class GatewayService {
       return response;
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      
+
       this.loggerPort.error(
         `Gateway error: ${error.message}`,
         error.stack,
         'GatewayService',
       );
 
+      const statusGuess =
+        error.message.includes('AuthMissingToken') || error.message.includes('AuthInvalidToken')
+          ? 401
+          : error.message.includes('AuthInsufficientPermissions')
+          ? 403
+          : 500;
+
       this.loggerPort.logRequest(
         request.method,
         request.url,
-        error.message.includes('Invalid JWT') ? 401 : 500,
+        statusGuess,
         responseTime,
         request.userAgent,
         request.ip,

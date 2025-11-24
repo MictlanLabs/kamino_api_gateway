@@ -5,6 +5,7 @@ import { WinstonLoggerAdapter } from './infrastructure/adapters/winston-logger.a
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: new WinstonLoggerAdapter(),
+    bodyParser: false,
   });
 
   const normalizeOrigin = (v?: string) => (v ? v.replace(/^(["'`\s]+)|(["'`\s]+)$/g, '') : '');

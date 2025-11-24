@@ -21,7 +21,7 @@ export class GatewayController {
         req.method,
         req.url,
         req.headers as Record<string, string>,
-        req.body,
+        req,
         new Date(),
         req.ip,
         req.get('User-Agent'),
@@ -29,10 +29,8 @@ export class GatewayController {
 
       const response = await this.gatewayService.processRequest(requestEntity);
 
-      // Configurar headers de respuesta
       if (response.headers) {
         Object.keys(response.headers).forEach((key) => {
-          // Evitar headers que pueden causar problemas
           if (!['content-encoding', 'transfer-encoding', 'connection'].includes(key.toLowerCase())) {
             res.set(key, response.headers[key]);
           }

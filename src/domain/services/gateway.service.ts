@@ -125,9 +125,9 @@ export class GatewayService {
     const serviceUrls = {
       users: process.env.USERS_SERVICE_URL || 'http://localhost:3001',
       places: process.env.PLACES_SERVICE_URL || 'http://localhost:3002',
-      routes: process.env.ROUTES_SERVICE_URL || 'http://localhost:8000',
+      routes: process.env.ROUTES_SERVICE_URL || 'http://localhost:8080',
       narrator: process.env.PLACES_SERVICE_URL || 'http://localhost:3002',
-      recommender: process.env.ROUTES_SERVICE_URL || 'http://localhost:8000',
+      recommender: process.env.ROUTES_SERVICE_URL || 'http://localhost:8080',
     };
 
     return serviceUrls[serviceRoute];

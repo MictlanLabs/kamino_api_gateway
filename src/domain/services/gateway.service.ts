@@ -126,7 +126,7 @@ export class GatewayService {
       users: process.env.USERS_SERVICE_URL || 'http://localhost:3001',
       places: process.env.PLACES_SERVICE_URL || 'http://localhost:3002',
       routes: process.env.ROUTES_SERVICE_URL || 'http://localhost:3003',
-      narrator: process.env.NARRATOR_SERVICE_URL || 'http://localhost:3004',
+      narrator: process.env.PLACES_SERVICE_URL || 'http://localhost:3002',
     };
 
     return serviceUrls[serviceRoute];

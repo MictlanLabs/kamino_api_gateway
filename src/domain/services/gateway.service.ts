@@ -127,6 +127,7 @@ export class GatewayService {
       places: process.env.PLACES_SERVICE_URL || 'http://localhost:3002',
       routes: process.env.ROUTES_SERVICE_URL || 'http://localhost:8000',
       narrator: process.env.PLACES_SERVICE_URL || 'http://localhost:3002',
+      recommender: process.env.ROUTES_SERVICE_URL || 'http://localhost:8000',
     };
 
     return serviceUrls[serviceRoute];

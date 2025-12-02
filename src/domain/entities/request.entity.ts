@@ -19,9 +19,10 @@ export class RequestEntity {
 
     if (serviceSegment === 'auth' || serviceSegment === 'users') return 'users';
     if (serviceSegment === 'places') return 'places';
-    if (serviceSegment === 'routes') return 'routes';
+    if (serviceSegment === 'routes') return 'routes';         
+    if (serviceSegment === 'recommender') return 'routes';   
     if (serviceSegment === 'narrator') return 'narrator';
-    if (serviceSegment === 'chat') return 'places';      // ← AGREGAR ESTA LÍNEA
+    if (serviceSegment === 'chat') return 'places';      
     if (serviceSegment === 'gemini') return 'places'; 
     throw new Error(`Unknown service route for URL: ${this.url}`);
   }

@@ -22,7 +22,7 @@ export class GatewayService {
       const serviceRoute = request.getServiceRoute();
       let enhancedHeaders = { ...request.headers };
 
-      const requireAuthForPlaces = !authDisabled && serviceRoute === 'places';
+      const requireAuthForPlaces = !authDisabled && (serviceRoute === 'places' || serviceRoute === 'routes');
       if (requireAuthForPlaces) {
         const authHeader = request.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -125,7 +125,7 @@ export class GatewayService {
     const serviceUrls = {
       users: process.env.USERS_SERVICE_URL || 'http://localhost:3001',
       places: process.env.PLACES_SERVICE_URL || 'http://localhost:3002',
-      routes: process.env.ROUTES_SERVICE_URL || 'http://localhost:3003',
+      routes: process.env.ROUTES_SERVICE_URL || 'http://localhost:8000',
       narrator: process.env.PLACES_SERVICE_URL || 'http://localhost:3002',
     };
 

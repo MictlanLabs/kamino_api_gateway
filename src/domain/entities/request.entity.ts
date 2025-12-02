@@ -19,8 +19,8 @@ export class RequestEntity {
 
     if (serviceSegment === 'auth' || serviceSegment === 'users') return 'users';
     if (serviceSegment === 'places') return 'places';
-    if (serviceSegment === 'routes') return 'routes';         
-    if (serviceSegment === 'recommender') return 'routes';   
+    if (serviceSegment === 'routes') return 'routes';
+    if (serviceSegment === 'recommender') return 'recommender';
     if (serviceSegment === 'narrator') return 'narrator';
     if (serviceSegment === 'chat') return 'places';      
     if (serviceSegment === 'gemini') return 'places'; 
@@ -42,7 +42,7 @@ export class RequestEntity {
     const serviceKey = this.getServiceRoute(); // users | places | routes | narrator
 
     const envKey = `${serviceKey.toUpperCase()}_SERVICE_BASE_PATH`;
-    const defaultBase = serviceKey === 'users' ? '/api' : '';
+    const defaultBase = serviceKey === 'users' || serviceKey === 'recommender' ? '/api' : '';
     let basePath = (process.env[envKey] as string | undefined) ?? defaultBase;
 
     // Si el cliente envió versión explícita (/api/v1), respetarla

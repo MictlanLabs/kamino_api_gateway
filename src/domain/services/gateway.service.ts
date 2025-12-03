@@ -23,7 +23,7 @@ export class GatewayService {
       let enhancedHeaders = { ...request.headers };
 
       const requireAuthForPlaces = !authDisabled && (serviceRoute === 'places' || serviceRoute === 'routes' || serviceRoute === 'recommender' || serviceRoute === 'logbook' ||
-        serviceRoute === 'favorites'); 
+        serviceRoute === 'favorites' || serviceRoute === 'visited'); 
       if (requireAuthForPlaces) {
         const authHeader = request.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {

@@ -57,9 +57,9 @@ export class JwtAuthAdapter implements AuthPort {
       }) as any;
 
       return {
-        id: decoded.sub || decoded.id,
+        id: decoded.userId || decoded.sub || decoded.id,
         email: decoded.email,
-        roles: decoded.roles || [],
+        roles: decoded.roles || (decoded.role ? [decoded.role] : []),
       };
     } catch {
       throw new Error('Invalid token');

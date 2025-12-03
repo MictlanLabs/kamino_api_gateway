@@ -73,6 +73,10 @@ export class GatewayService {
         `Routing request: ${request.method} ${request.url} -> ${serviceRoute} service -> ${finalUrl}`,
         'GatewayService',
       );
+      this.loggerPort.log(
+        `Forwarding headers: ${JSON.stringify(enhancedHeaders)}`,
+        'GatewayService',
+      );
 
       const response = await this.gatewayPort.forwardRequest(
         request.method,

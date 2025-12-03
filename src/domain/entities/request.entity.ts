@@ -19,6 +19,7 @@ export class RequestEntity {
 
     if (serviceSegment === 'auth' || serviceSegment === 'users') return 'users';
     if (serviceSegment === 'favorites') return 'users'; 
+    if (serviceSegment === 'visited') return 'users'; 
     if (serviceSegment === 'places') return 'places';
     if (serviceSegment === 'routes') return 'routes';
     if (serviceSegment === 'recommender') return 'recommender';

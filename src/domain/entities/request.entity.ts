@@ -44,7 +44,7 @@ export class RequestEntity {
     const serviceKey = this.getServiceRoute(); // users | places | routes | narrator
 
     const envKey = `${serviceKey.toUpperCase()}_SERVICE_BASE_PATH`;
-    const defaultBase = ['users', 'recommender', 'popularity', 'logbook'].includes(serviceKey) ? '/api' : '';
+    const defaultBase = ['users', 'recommender', 'popularity', 'logbook', 'routes'].includes(serviceKey) ? '/api' : '';
     let basePath = (process.env[envKey] as string | undefined) ?? defaultBase;
 
     // Si el cliente envió versión explícita (/api/v1), respetarla

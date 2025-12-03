@@ -24,7 +24,8 @@ export class RequestEntity {
     if (serviceSegment === 'narrator') return 'narrator';
     if (serviceSegment === 'chat') return 'places';      
     if (serviceSegment === 'gemini') return 'places'; 
-    if (serviceSegment === 'popularity') return 'popularity';  
+    if (serviceSegment === 'popularity') return 'popularity'; 
+    if (serviceSegment === 'logbook') return 'logbook';
     throw new Error(`Unknown service route for URL: ${this.url}`);
   }
 
